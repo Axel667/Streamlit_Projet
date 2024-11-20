@@ -1,0 +1,56 @@
+/* style.css */
+
+/* Import de la police Google */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Application de la police à toute l'app */
+* {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Style global pour le fond */
+body {
+    background-color: #ffffff; /* Fond blanc */
+    color: #333333; /* Couleur de texte par défaut (gris foncé) */
+    margin: 0;
+    padding: 0;
+}
+
+/* Style du titre */
+.title {
+    color: #ffcc00;
+    font-size: 2.5em;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Style des sous-titres */
+.subtitle {
+    color: #606770;
+    font-size: 1.2em;
+    text-align: center;
+}
+
+/* Style pour les dataframes */
+.stDataFrame {
+    border: 1px solid #e2e2e2;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Bouton arrondi */
+.stButton>button {
+    color: white;
+    background: linear-gradient(90deg, #ffcc00, #ff9933);
+    border-radius: 10px;
+    font-weight: bold;
+    border: none;
+    padding: 0.5em 1em;
+}
+
+/* Centrer le logo */
+.logo {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}

@@ -43,7 +43,7 @@ def fetch_leaderboard_data():
         df['model_name'], df['model_link'] = zip(*df['model_name_html'].apply(extract_model_info))
 
         # Ensure required columns exist
-        required_columns = ["precision", "type", "model_name", "submission_date", "score", "model_link","co2_cost_kg"]
+        required_columns = ["precision", "type", "model_name", "submission_date", "score", "model_link","co2_cost_kg","params_b"]
         benchmark_metric_columns = ["IFEval", "BBH", "MATH Lvl 5", "GPQA", "MUSR", "MMLU-PRO"]
         required_columns.extend(benchmark_metric_columns)
 
@@ -51,11 +51,11 @@ def fetch_leaderboard_data():
         for col in missing_columns:
             df[col] = None  # Handle missing columns appropriately
 
-        # Convert data types
         df["submission_date"] = pd.to_datetime(df["submission_date"], errors='coerce')
         df["score"] = pd.to_numeric(df["score"], errors='coerce')
         df["co2_cost_kg"] = pd.to_numeric(df["co2_cost_kg"], errors='coerce')
-    
+        df["params_b"] = pd.to_numeric(df["params_b"], errors='coerce')
+
         for col in benchmark_metric_columns:
             df[col] = pd.to_numeric(df[col], errors='coerce')
 
@@ -263,6 +263,7 @@ def render_benchmarks_page():
 
         # User selections
         st.markdown("Customize the scatter plot using the controls below.")
+        
 
         benchmark_options = benchmark_metric_columns + ['score']
         selected_benchmark = st.selectbox(
@@ -271,7 +272,7 @@ def render_benchmarks_page():
             index=benchmark_options.index('score') if 'score' in benchmark_options else 0
         )
 
-        size_options = ['#Params (B)', 'co2_cost_kg']
+        size_options = ['params_b', 'co2_cost_kg']
         size_variable = st.selectbox(
             "Select Variable for Point Size:",
             options=size_options,
@@ -290,11 +291,15 @@ def render_benchmarks_page():
         if missing_columns:
             st.write(f"The following columns are missing for plotting: {', '.join(missing_columns)}")
         else:
-            # Drop rows with missing values
+            # Drop rows with missing values in required columns
             analysis_df = filtered_df.dropna(subset=required_columns_for_plot)
 
             # Convert size variable to numeric if necessary
             analysis_df[size_variable] = pd.to_numeric(analysis_df[size_variable], errors='coerce')
+
+            # Filter out negative and missing values in size_variable
+            analysis_df = analysis_df[analysis_df[size_variable] >= 0]
+
 
             # Create the scatter plot
             fig_analysis = px.scatter(
@@ -318,5 +323,3 @@ def render_benchmarks_page():
     else:
         st.error("No data available to display. Check the API connection or try again later.")
 
-
-#########

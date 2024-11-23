@@ -7,12 +7,8 @@ import numpy as np
 from benchmark import render_benchmarks_page
 
 
-# Set page configuration
-st.set_page_config(
-    page_title="Catalogue des Modèles Hugging Face",
-    layout="wide",
-    page_icon="🤗"
-)
+# Supprimer la configuration de page ici car elle sera gérée par accueil.py
+# st.set_page_config(...)
 
 @st.cache_data(ttl=3600)
 def fetch_models_data():
@@ -169,27 +165,73 @@ def render_datasets_page():
     else:
         st.error("Aucune donnée disponible.")
 
-def main():
-    st.sidebar.markdown("<h1 style='color: #FFD700;'>🤗 Hugging Face</h1>", unsafe_allow_html=True)
-    st.sidebar.markdown("<p style='color: #FFD700;'>Explorez les modèles et benchmarks.</p>", unsafe_allow_html=True)
-    
-    # Initialize session state for active page
-    if "active_page" not in st.session_state:
-        st.session_state.active_page = "Modèles"  # Default page
-    
-    # Navigation
-    st.sidebar.markdown("## Navigation")
-    pages = {"Modèles": render_datasets_page, "Benchmarks": render_benchmarks_page}
+# ...existing code...
 
-    st.session_state.active_page = st.sidebar.radio(
-        "Aller à",
-        options=list(pages.keys()),
-        index=list(pages.keys()).index(st.session_state.active_page)
+def main():
+    # Initialisation de session_state
+    if "active_page" not in st.session_state:
+        st.session_state["active_page"] = "🏠 Accueil"
+
+    # Ajouter du CSS personnalisé pour la sidebar
+    st.markdown("""
+        <style>
+        .sidebar-nav {
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #262730;
+        }
+        .nav-button {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #FFD700;
+            border-radius: 5px;
+            background-color: transparent;
+            color: #FFD700;
+            transition: all 0.3s;
+        }
+        .nav-button:hover, .nav-button.active {
+            background-color: #FFD700;
+            color: #262730;
+        }
+        </style>
+    """, unsafe_allow_html=True)
+
+    # Logo et titre dans la sidebar
+    st.sidebar.markdown(
+        "<h1 style='text-align: center; padding: 20px 0; border-bottom: 2px solid #FFD700;'>"
+        "🤗 Hugging Face Explorer</h1>", 
+        unsafe_allow_html=True
     )
 
+    # Navigation améliorée
+    st.sidebar.markdown("<div class='sidebar-nav'>", unsafe_allow_html=True)
+    
+    # Importer la fonction d'accueil
+    from accueil import render_accueil_page
+    
+    pages = {
+        "🏠 Accueil": render_accueil_page,
+        "🔍 Modèles": render_datasets_page,
+        "📊 Benchmarks": render_benchmarks_page
+    }
+    
+    for page_name in pages:
+        if st.sidebar.button(
+            page_name, 
+            key=page_name,
+            help=f"Aller à {page_name}",
+            use_container_width=True,
+            type="primary" if st.session_state["active_page"] == page_name else "secondary"
+        ):
+            st.session_state["active_page"] = page_name
+    
+    st.sidebar.markdown("</div>", unsafe_allow_html=True)
+
     # Render the active page
-    pages[st.session_state.active_page]()
+    pages[st.session_state["active_page"]]()
 
 
 if __name__ == "__main__":
+    from accueil import main
     main()

@@ -67,6 +67,9 @@ def fetch_leaderboard_data():
         return pd.DataFrame()
 
 def render_benchmarks_page():
+    if "active_page" not in st.session_state:
+        st.session_state["active_page"] = "🏠 Accueil"
+
     st.markdown("<h1 class='title'>Tableau de Bord des Modèles LLM Open Source</h1>", unsafe_allow_html=True)
     st.markdown("<p class='subtitle'>Explorez les données de performance des modèles de langage :</p>", unsafe_allow_html=True)
 
@@ -316,3 +319,7 @@ def render_benchmarks_page():
 
     else:
         st.error("No data available to display. Check the API connection or try again later.")
+
+if __name__ == "__main__":
+    from accueil import main
+    main()

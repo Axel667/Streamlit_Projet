@@ -1,7 +1,6 @@
 streamlit
 pandas
 plotly
-matplotlib
-seaborn
 eventregistry
 requests
+python-dotenv==0.19.0

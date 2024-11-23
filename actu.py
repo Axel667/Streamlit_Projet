@@ -4,9 +4,6 @@ import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
 from eventregistry import *
-import matplotlib.pyplot as plt
-import seaborn as sns
-import matplotlib.dates as mdates
 import os
 from dotenv import load_dotenv
 
@@ -15,6 +12,7 @@ load_dotenv()
 
 # Fallback si le .env ne fonctionne pas
 api_key = os.getenv('EVENT_REGISTRY_API_KEY') or "6d15fe13-b16a-4080-bbff-dc81f97f3d0d"
+
 
 def render_actu_page():
     # Titre avec le style Hugging Face
@@ -76,20 +74,6 @@ def render_actu_page():
     df_articles = df_articles.dropna(subset=['country'])
     df_articles_llm = df_articles.copy()
 
-    # Metrics Section
-    st.markdown("### 📰 Aperçu des Articles")
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("Total Articles", f"{len(df_articles_llm):,}")
-    with col2:
-        st.metric("Pays Couverts", f"{df_articles_llm['country'].nunique():,}")
-    with col3:
-        avg_sentiment = df_articles_llm['sentiment'].mean()
-        st.metric("Sentiment Moyen", f"{avg_sentiment:.2f}")
-    with col4:
-        recent_articles = df_articles_llm[df_articles_llm['date'] >= (pd.Timestamp.now() - pd.Timedelta(days=7))].shape[0]
-        st.metric("Articles (7 derniers jours)", f"{recent_articles:,}")
-
     # Sidebar filters
     st.sidebar.markdown("### 🔍 Filtres")
     
@@ -132,6 +116,124 @@ def render_actu_page():
     if search_query:
         df_filtered = df_filtered[df_filtered['title'].str.contains(search_query, case=False, na=False)]
 
+    # NOUVELLE ORGANISATION : Articles en premier
+    st.markdown("### 📰 Articles")
+    
+    # Pagination simplifiée
+    articles_per_page = 1
+    total_articles = len(df_filtered)
+    total_pages = (total_articles + articles_per_page - 1) // articles_per_page
+    
+    # Centrer le sélecteur de page
+    _, col2, _ = st.columns([1, 2, 1])
+    with col2:
+        current_page = st.number_input(
+            f"Article ({total_articles} au total)", 
+            min_value=1, 
+            max_value=max(1, total_pages), 
+            value=1
+        )
+
+    start_idx = (current_page - 1) * articles_per_page
+    end_idx = min(start_idx + articles_per_page, total_articles)
+    
+    # Afficher l'article de la page courante
+    for idx in range(start_idx, end_idx):
+        article = df_filtered.iloc[idx]
+        
+        # Styles et affichage de l'article
+        st.markdown("""
+        <style>
+        .article-card {
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #1E1E1E;
+            margin: 10px 0;
+            border: 1px solid #FFD700;
+        }
+        .article-title {
+            color: #FFD700;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .article-meta {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .article-sentiment {
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .article-preview {
+            margin-top: 20px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            height: 600px;
+            background-color: white;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # Aperçu de l'article toujours affiché
+        if article['url']:
+            st.markdown(f"""
+            <div class="article-preview">
+                <iframe src="{article['url']}" 
+                    width="100%" 
+                    height="100%" 
+                    frameborder="0" 
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                    style="background: white;">
+                </iframe>
+            </div>
+            """, unsafe_allow_html=True)
+
+        # Informations de l'article sous l'iframe
+        st.markdown(f"""
+        <div class="article-card">
+            <div class="article-title">
+                <a href="{article['url']}" target="_blank" style="color: #FFD700; text-decoration: none;">
+                    {article['title']}
+                </a>
+            </div>
+            <div class="article-meta">
+                📅 {article['date'].strftime('%Y-%m-%d')} | 🌍 {article['country']}
+            </div>
+            <div class="article-sentiment" style="background-color: {'#4CAF50' if article['sentiment'] > 0 else '#F44336'}40;">
+                🎭 Sentiment: {article['sentiment']:.2f}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Boutons d'action
+        col1, col2 = st.columns(2)
+        with col1:
+            st.link_button("🔗 Lire l'article", article['url'])
+        with col2:
+            if article['url']:
+                st.link_button("📰 Archive Web", f"https://web.archive.org/web/{article['url']}")
+
+    # Barre de progression
+    st.progress(current_page / total_pages)
+
+    # Metrics Section après les articles
+    st.markdown("### 📊 Statistiques")
+    st.markdown("### 📰 Aperçu des Articles")
+    col1, col2, col3, col4 = st.columns(4)
+    with col1:
+        st.metric("Total Articles", f"{len(df_articles_llm):,}")
+    with col2:
+        st.metric("Pays Couverts", f"{df_articles_llm['country'].nunique():,}")
+    with col3:
+        avg_sentiment = df_articles_llm['sentiment'].mean()
+        st.metric("Sentiment Moyen", f"{avg_sentiment:.2f}")
+    with col4:
+        recent_articles = df_articles_llm[df_articles_llm['date'] >= (pd.Timestamp.now() - pd.Timedelta(days=7))].shape[0]
+        st.metric("Articles (7 derniers jours)", f"{recent_articles:,}")
+
     # Rest of visualizations with updated styling
     st.markdown("### 🗺️ Distribution Géographique")
     st.markdown("Cette carte montre la quantité et le sentiment global des articles sur les LLM dans le monde.")
@@ -142,9 +244,6 @@ def render_actu_page():
         avg_sentiment=('sentiment', 'mean')
     ).reset_index()
 
-    # Définir une échelle de couleurs personnalisée basée sur les valeurs réelles de avg_sentiment
-    color_scale = px.colors.sequential.YlGn  # Gradient du jaune au vert
-
     # Créer le graphique avec des cercles représentant le nombre d'articles et le sentiment moyen
     fig_map = px.scatter_geo(
         country_stats,
@@ -154,35 +253,38 @@ def render_actu_page():
         size='num_articles',
         size_max=40,
         color='avg_sentiment',
-        color_continuous_scale=color_scale,
-        title=False
+        color_continuous_scale='RdYlGn',  # Rouge à Jaune à Vert
+        title=False,
+        hover_data={
+            'num_articles': True,
+            'avg_sentiment': ':.2f'
+        }
     )
 
-    # Ajuster la barre de couleurs pour afficher les valeurs réelles du sentiment moyen
-    fig_map.update_coloraxes(
-        colorbar=dict(
-            title='Sentiment Moyen',
-        )
+    # Mise à jour du layout de la carte
+    fig_map.update_geos(
+        showcountries=True,
+        countrycolor="Gray",
+        showcoastlines=True,
+        coastlinecolor="Gray",
+        showland=True,
+        landcolor="Black",
+        showocean=True,
+        oceancolor="Black",
+        projection_type="equirectangular",
+        bgcolor='rgba(0,0,0,0)'
     )
 
-    # Activer les interactions de zoom et de pan
+    # Mise à jour du layout général
     fig_map.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
         geo=dict(
-            projection_scale=1,
-            center=dict(lat=0, lon=0),
+            bgcolor='rgba(0,0,0,0)',
         ),
-        margin={"r":0,"t":50,"l":0,"b":0}  # Ajusté le haut pour le titre
+        margin=dict(l=0, r=0, t=0, b=0)
     )
 
-    # Configuration pour activer le zoom et le pan
-    config = {
-        'scrollZoom': True,     # Active le zoom avec la molette de la souris
-        'doubleClick': 'reset', # Active le zoom sur double-clic
-        'displayModeBar': True, # Affiche la barre de mode
-        'staticPlot': False     # Permet toutes les interactions
-    }
-
-    st.plotly_chart(fig_map, use_container_width=True, config=config)
+    st.plotly_chart(fig_map, use_container_width=True)
 
     st.markdown("### 📈 Tendances Temporelles")
     st.markdown("Ce graphique montre le nombre d'articles et le sentiment moyen au cours du temps.")
@@ -258,109 +360,6 @@ def render_actu_page():
     fig_pie.update_traces(textposition='inside', textinfo='percent+label')
 
     st.plotly_chart(fig_pie, use_container_width=True)
-
-    # Remplacer la section "Articles Détaillés" avec un afficheur d'articles paginé
-    st.markdown("### 📰 Articles")
-    
-    # Pagination simplifiée avec seulement le sélecteur de page
-    articles_per_page = 1
-    total_articles = len(df_filtered)
-    total_pages = (total_articles + articles_per_page - 1) // articles_per_page
-    
-    # Centrer le sélecteur de page
-    _, col2, _ = st.columns([1, 2, 1])
-    with col2:
-        current_page = st.number_input(
-            f"Article ({total_articles} au total)", 
-            min_value=1, 
-            max_value=max(1, total_pages), 
-            value=1
-        )
-
-    start_idx = (current_page - 1) * articles_per_page
-    end_idx = min(start_idx + articles_per_page, total_articles)
-    
-    # Afficher l'article de la page courante
-    for idx in range(start_idx, end_idx):
-        article = df_filtered.iloc[idx]
-        
-        # Créer une carte pour l'article
-        st.markdown("""
-        <style>
-        .article-card {
-            padding: 20px;
-            border-radius: 10px;
-            background-color: #1E1E1E;
-            margin: 10px 0;
-            border: 1px solid #FFD700;
-        }
-        .article-title {
-            color: #FFD700;
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-        .article-meta {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-        .article-sentiment {
-            padding: 5px 10px;
-            border-radius: 15px;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        .article-preview {
-            margin-top: 20px;
-            border: 1px solid #444;
-            border-radius: 5px;
-            height: 600px;
-            background-color: white;
-        }
-        </style>
-        """, unsafe_allow_html=True)
-
-        # Afficher les informations de l'article
-        st.markdown(f"""
-        <div class="article-card">
-            <div class="article-title">
-                <a href="{article['url']}" target="_blank" style="color: #FFD700; text-decoration: none;">
-                    {article['title']}
-                </a>
-            </div>
-            <div class="article-meta">
-                📅 {article['date'].strftime('%Y-%m-%d')} | 🌍 {article['country']}
-            </div>
-            <div class="article-sentiment" style="background-color: {'#4CAF50' if article['sentiment'] > 0 else '#F44336'}40;">
-                🎭 Sentiment: {article['sentiment']:.2f}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        # Boutons d'action simplifiés sur une seule ligne
-        col1, col2 = st.columns(2)
-        with col1:
-            st.link_button("🔗 Lire l'article", article['url'])
-        with col2:
-            if article['url']:
-                st.link_button("📰 Archive Web", f"https://web.archive.org/web/{article['url']}")
-
-        # Aperçu de l'article toujours affiché
-        if article['url']:
-            st.markdown(f"""
-            <div class="article-preview">
-                <iframe src="{article['url']}" 
-                    width="100%" 
-                    height="100%" 
-                    frameborder="0" 
-                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                    style="background: white;">
-                </iframe>
-            </div>
-            """, unsafe_allow_html=True)
-
-    # Afficher la progression
-    st.progress(current_page / total_pages)
 
     st.progress(current_page / total_pages)
 if __name__ == "__main__":

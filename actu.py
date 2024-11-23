@@ -20,7 +20,7 @@ st.markdown("<h1 class='title'>Analyse des Articles sur les LLM</h1>", unsafe_al
 st.markdown("<p class='subtitle'>Cette application présente une visualisation interactive des articles collectés sur les LLMs (Large Language Models).</p>", unsafe_allow_html=True)
 
 # Configuration de l'API Key
-api_key = "YOUR_API_KEY"  # Remplacez par votre propre clé API
+api_key = "6d15fe13-b16a-4080-bbff-dc81f97f3d0d"
 
 # Collecter les articles via EventRegistry
 @st.cache_data

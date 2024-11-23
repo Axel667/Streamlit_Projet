@@ -1,3 +1,7 @@
-requests
-matplotlib
+streamlit
+pandas
 plotly
+matplotlib
+seaborn
+eventregistry
+requests

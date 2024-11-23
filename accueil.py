@@ -1,4 +1,7 @@
 import streamlit as st
+from app import render_datasets_page
+from benchmark import render_benchmarks_page
+from actu import render_actu_page  # Nouvel import
 
 # Import des fonctions de rendu après render_accueil_page pour éviter les imports circulaires
 def render_accueil_page():
@@ -70,13 +73,11 @@ def main():
     # Navigation
     st.sidebar.markdown("<div class='sidebar-nav'>", unsafe_allow_html=True)
     
-    from app import render_datasets_page
-    from benchmark import render_benchmarks_page
-    
     pages = {
         "🏠 Accueil": render_accueil_page,
         "🔍 Modèles": render_datasets_page,
-        "📊 Benchmarks": render_benchmarks_page
+        "📊 Benchmarks": render_benchmarks_page,
+        "📰 Actualités": render_actu_page  # Nouvelle page
     }
     
     for page_name in pages:

@@ -1,4 +1,5 @@
 # Streamlit_Projet
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-streamlit-app-link)
 
 # How to Clone and Run the Project Locally
 
@@ -31,8 +32,3 @@ Use pip to install the required libraries:
 Launch the app by running the following command:
     ```bash
     streamlit run app.py
-
-
-
-
-

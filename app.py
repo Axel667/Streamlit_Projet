@@ -59,7 +59,7 @@ def render_datasets_page():
         st.plotly_chart(fig_time_series)
 
         st.markdown("<h2 class='subtitle'>Distribution des Likes</h2>", unsafe_allow_html=True)
-        fig_likes = px.violin(df, y="Likes", box=True, points="all", title="Distribution des Likes")
+        fig_likes = px.violin(df, y="Likes", box=True, points="all", title=False)
         st.plotly_chart(fig_likes)
     else:
         st.error(f"Erreur lors de la requête : {response.status_code}")

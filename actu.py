@@ -7,13 +7,25 @@ from eventregistry import *
 import matplotlib.pyplot as plt
 import seaborn as sns
 import matplotlib.dates as mdates
+import os
+from dotenv import load_dotenv
+
+# Charger les variables d'environnement
+load_dotenv()
+
+# Fallback si le .env ne fonctionne pas
+api_key = os.getenv('EVENT_REGISTRY_API_KEY') or "6d15fe13-b16a-4080-bbff-dc81f97f3d0d"
 
 def render_actu_page():
     # Titre avec le style Hugging Face
     st.markdown("<h1 style='text-align: center; color: #FFD700;'>Actualités des LLMs</h1>", unsafe_allow_html=True)
     
-    # Configuration de l'API Key
-    api_key = "6d15fe13-b16a-4080-bbff-dc81f97f3d0d"
+    # Récupérer la clé API depuis les variables d'environnement
+    api_key = os.getenv('EVENT_REGISTRY_API_KEY')
+    
+    if not api_key:
+        st.error("La clé API EVENT_REGISTRY_API_KEY n'est pas configurée dans le fichier .env")
+        return
 
     # Fonction pour récupérer les articles
     @st.cache_data
@@ -247,24 +259,114 @@ def render_actu_page():
 
     st.plotly_chart(fig_pie, use_container_width=True)
 
-    # Data display with improved styling
-    st.markdown("### 📋 Articles Détaillés")
-    st.dataframe(
-        df_filtered.style.format({
-            'sentiment': '{:.2f}',
-            'date': lambda x: x.strftime('%Y-%m-%d')
-        })
-    )
+    # Remplacer la section "Articles Détaillés" avec un afficheur d'articles paginé
+    st.markdown("### 📰 Articles")
+    
+    # Pagination simplifiée avec seulement le sélecteur de page
+    articles_per_page = 1
+    total_articles = len(df_filtered)
+    total_pages = (total_articles + articles_per_page - 1) // articles_per_page
+    
+    # Centrer le sélecteur de page
+    _, col2, _ = st.columns([1, 2, 1])
+    with col2:
+        current_page = st.number_input(
+            f"Article ({total_articles} au total)", 
+            min_value=1, 
+            max_value=max(1, total_pages), 
+            value=1
+        )
 
-    # Download button with Hugging Face style
-    csv = df_filtered.to_csv(index=False)
-    st.download_button(
-        label="📥 Télécharger les Données (CSV)",
-        data=csv,
-        file_name='articles_llm.csv',
-        mime='text/csv',
-        help="Télécharger les données filtrées au format CSV"
-    )
+    start_idx = (current_page - 1) * articles_per_page
+    end_idx = min(start_idx + articles_per_page, total_articles)
+    
+    # Afficher l'article de la page courante
+    for idx in range(start_idx, end_idx):
+        article = df_filtered.iloc[idx]
+        
+        # Créer une carte pour l'article
+        st.markdown("""
+        <style>
+        .article-card {
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #1E1E1E;
+            margin: 10px 0;
+            border: 1px solid #FFD700;
+        }
+        .article-title {
+            color: #FFD700;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .article-meta {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .article-sentiment {
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        .article-preview {
+            margin-top: 20px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            height: 600px;
+            background-color: white;
+        }
+        </style>
+        """, unsafe_allow_html=True)
+
+        # Afficher les informations de l'article
+        st.markdown(f"""
+        <div class="article-card">
+            <div class="article-title">
+                <a href="{article['url']}" target="_blank" style="color: #FFD700; text-decoration: none;">
+                    {article['title']}
+                </a>
+            </div>
+            <div class="article-meta">
+                📅 {article['date'].strftime('%Y-%m-%d')} | 🌍 {article['country']}
+            </div>
+            <div class="article-sentiment" style="background-color: {'#4CAF50' if article['sentiment'] > 0 else '#F44336'}40;">
+                🎭 Sentiment: {article['sentiment']:.2f}
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        # Boutons d'action simplifiés sur une seule ligne
+        col1, col2 = st.columns(2)
+        with col1:
+            st.link_button("🔗 Lire l'article", article['url'])
+        with col2:
+            if article['url']:
+                st.link_button("📰 Archive Web", f"https://web.archive.org/web/{article['url']}")
+
+        # Aperçu de l'article toujours affiché
+        if article['url']:
+            st.markdown(f"""
+            <div class="article-preview">
+                <iframe src="{article['url']}" 
+                    width="100%" 
+                    height="100%" 
+                    frameborder="0" 
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
+                    style="background: white;">
+                </iframe>
+            </div>
+            """, unsafe_allow_html=True)
+
+    # Afficher la progression
+    st.progress(current_page / total_pages)
+
+    st.progress(current_page / total_pages)
+if __name__ == "__main__":
+    from accueil import main
+    main()
+    st.markdown(f"*Article {start_idx + 1} sur {total_articles}*")
 
 if __name__ == "__main__":
     from accueil import main

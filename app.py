@@ -83,7 +83,11 @@ def render_datasets_page():
 
         # Data Display
         st.markdown("<h2 style='color: #FFD700;'>📋 Liste des Modèles</h2>", unsafe_allow_html=True)
-        st.dataframe(filtered_df[["_id", "ID", "Auteur", "Gated", "Inference", "Dernière modification", "Likes", "Trending Score", "Privé", "Téléchargements", "Tags", "Library", "Date de création"]])
+        st.dataframe(filtered_df[[
+            "ID", "Auteur", "Gated", "Inference", "Dernière modification",
+            "Likes", "Trending Score", "Privé", "Téléchargements",
+            "Tags", "Library", "Date de création"
+        ]])
 
         # Visualizations
         st.markdown("### 📊 Visualisations")

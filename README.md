@@ -1,5 +1,5 @@
 # Streamlit_Projet
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://your-streamlit-app-link)
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io)
 
 # How to Clone and Run the Project Locally
 

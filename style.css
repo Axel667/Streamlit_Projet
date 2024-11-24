@@ -83,6 +83,7 @@ body {
     font-weight: bold;
     border: none;
     padding: 0.5em 1em;
+    background-color: #D3D3D3; /* Light grey background */
 }
 
 .stButton > button:hover {
@@ -134,4 +135,69 @@ body {
 /* Progress bar color */
 .stProgress > div > div > div > div {
     background-color: #D4AF37;  /* Metallic gold */
+}
+
+.article-container {
+    border: 1px solid #444;
+    border-radius: 5px;
+    background-color: white;
+    height: 800px;
+    display: flex;
+    flex-direction: column;
+    margin: 30px 0;
+}
+
+.article-header {
+    padding: 15px 20px;
+    background-color: #262730;
+    border-bottom: 1px solid #444;
+}
+
+.article-title {
+    color: #D4AF37;
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.article-meta {
+    color: #888;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.article-sentiment {
+    padding: 4px 8px;
+    border-radius: 12px;
+    display: inline-block;
+}
+
+.article-buttons {
+    padding: 12px 20px;
+    background-color: #262730;
+    border-bottom: 1px solid #444;
+    display: flex;
+    gap: 15px;
+}
+
+.article-button {
+    padding: 8px 16px;
+    border-radius: 4px;
+    color: #262730;  /* Dark text */
+    font-weight: bold;
+    text-decoration: none;
+    background-color: #D3D3D3; /* Light grey background */
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.article-button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+}
+
+.article-content {
+    flex-grow: 1;
+    border: none;
+    padding: 15px;  /* Added padding around iframe */
 }

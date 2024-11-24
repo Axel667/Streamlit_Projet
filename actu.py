@@ -114,7 +114,7 @@ def render_actu_page():
     # Calculate pagination values first
     articles_per_page = 1
     total_articles = len(df_filtered)
-    total_pages = (total_articles + articles_per_page - 1) // articles_per_page
+    total_pages = max((total_articles + articles_per_page - 1) // articles_per_page, 1)  # Avoid division by zero
 
     # Pagination and search in the same row
     col1, col2, col3 = st.columns([2, 1, 2])
@@ -137,99 +137,70 @@ def render_actu_page():
 
     # Apply search filter after pagination calculation
     if search_query:
-        df_filtered = df_filtered[df_filtered['title'].str.contains(search_query, case=False, na=False)]
+        temp_df = df_filtered[df_filtered['title'].str.contains(search_query, case=False, na=False)]
+        if len(temp_df) == 0:
+            st.warning(f"Aucun article trouvé pour : '{search_query}'")
+        else:
+            df_filtered = temp_df
+            
         # Recalculate pagination after search
         total_articles = len(df_filtered)
-        total_pages = (total_articles + articles_per_page - 1) // articles_per_page
+        total_pages = max(1, (total_articles + articles_per_page - 1) // articles_per_page)
+        
+        # Reset current page if it's now out of bounds
+        if current_page > total_pages:
+            current_page = 1
 
     start_idx = (current_page - 1) * articles_per_page
     end_idx = min(start_idx + articles_per_page, total_articles)
 
-    # NOUVELLE ORGANISATION : Articles en premier
-    st.markdown("### 📰 Articles")
-
-    
-    # Afficher l'article de la page courante
-    for idx in range(start_idx, end_idx):
-        article = df_filtered.iloc[idx]
+    # Only show article section if we have results
+    if total_articles > 0:
+        st.markdown("### 📰 Articles")
         
-        # Styles et affichage de l'article
-        st.markdown("""
-        <style>
-        .article-card {
-            padding: 20px;
-            border-radius: 10px;
-            background-color: #1E1E1E;
-            margin: 10px 0;
-            border: 1px solid #FFD700;
-        }
-        .article-title {
-            color: #FFD700;
-            font-size: 20px;
-            margin-bottom: 10px;
-        }
-        .article-meta {
-            color: #888;
-            font-size: 14px;
-            margin-bottom: 15px;
-        }
-        .article-sentiment {
-            padding: 5px 10px;
-            border-radius: 15px;
-            display: inline-block;
-            margin-top: 10px;
-        }
-        .article-preview {
-            margin-top: 20px;
-            border: 1px solid #444;
-            border-radius: 5px;
-            height: 600px;
-            background-color: white;
-        }
-        </style>
-        """, unsafe_allow_html=True)
+        # Include CSS from style.css
+        with open("style.css") as f:
+            st.markdown("<style>{}</style>".format(f.read()), unsafe_allow_html=True)
 
-        # Aperçu de l'article toujours affiché
-        if article['url']:
-            st.markdown(f"""
-            <div class="article-preview">
-                <iframe src="{article['url']}" 
-                    width="100%" 
-                    height="100%" 
-                    frameborder="0" 
-                    sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-                    style="background: white;">
-                </iframe>
-            </div>
-            """, unsafe_allow_html=True)
+        # Afficher l'article de la page courante
+        for idx in range(start_idx, end_idx):
+            article = df_filtered.iloc[idx]
 
-        # Informations de l'article sous l'iframe
-        st.markdown(f"""
-        <div class="article-card">
-            <div class="article-title">
-                <a href="{article['url']}" target="_blank" style="color: #FFD700; text-decoration: none;">
-                    {article['title']}
-                </a>
-            </div>
-            <div class="article-meta">
-                📅 {article['date'].strftime('%Y-%m-%d')} | 🌍 {article['country']}
-            </div>
-            <div class="article-sentiment" style="background-color: {'#4CAF50' if article['sentiment'] > 0 else '#F44336'}40;">
-                🎭 Sentiment: {article['sentiment']:.2f}
-            </div>
-        </div>
-        """, unsafe_allow_html=True)
-
-        # Boutons d'action
-        col1, col2 = st.columns(2)
-        with col1:
-            st.link_button("🔗 Lire l'article", article['url'])
-        with col2:
+            # Combined article container with all elements
             if article['url']:
-                st.link_button("📰 Archive Web", f"https://web.archive.org/web/{article['url']}")
+                st.markdown(f"""
+                <div class="article-container">
+                    <div class="article-header">
+                        <div class="article-title">
+                            <a href="{article['url']}" target="_blank" style="color: #D4AF37; text-decoration: none;">
+                                {article['title']}
+                            </a>
+                        </div>
+                        <div class="article-meta">
+                            📅 {article['date'].strftime('%Y-%m-%d')} | 🌍 {article['country']}
+                        </div>
+                        <div class="article-sentiment" style="background-color: {'#4CAF50' if article['sentiment'] > 0 else '#F44336'}40;">
+                            🎭 Sentiment: {article['sentiment']:.2f}
+                        </div>
+                    </div>
+                    <div class="article-buttons">
+                        <a href="{article['url']}" target="_blank" class="article-button">🔗 Lire l'article</a>
+                        <a href="https://web.archive.org/web/{article['url']}" target="_blank" class="article-button">📰 Archive Web</a>
+                    </div>
+                    <iframe src="{article['url']}" 
+                        class="article-content"
+                        frameborder="0" 
+                        sandbox="allow-same-origin allow-scripts allow-popups allow-forms">
+                    </iframe>
+                </div>
+                """, unsafe_allow_html=True)
 
-    # Barre de progression
-    st.progress(current_page / total_pages)
+    else:
+        st.warning("Aucun article trouvé dans cette plage.")
+
+    # Update progress bar calculation to handle zero division
+    progress = min(current_page / total_pages, 1)
+    st.progress(progress)
 
     # Metrics Section après les articles
     st.markdown("### 📊 Statistiques")

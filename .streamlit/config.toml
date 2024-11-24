@@ -1,0 +1,6 @@
+[theme]
+primaryColor = "#D4AF37"      # Metallic gold (more muted)
+backgroundColor = "#0E1117"    # Dark background
+secondaryBackgroundColor = "#262730"  # Slightly lighter dark
+textColor = "#FFFFFF"         # Light cream/beige for better readability
+font = "sans serif"

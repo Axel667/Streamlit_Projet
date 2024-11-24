@@ -18,7 +18,7 @@ body {
 
 /* Style du titre */
 .title {
-    color: #ffcc00;
+    color: #D4AF37;  /* Metallic gold */
     font-size: 2.5em;
     font-weight: bold;
     text-align: center;
@@ -67,7 +67,7 @@ body {
 
 /* Ensure links are visible */
 .dataframe a {
-    color: #FFD700;
+    color: #D4AF37;  /* Metallic gold */
     text-decoration: none;
 }
 
@@ -77,12 +77,18 @@ body {
 
 /* Bouton arrondi */
 .stButton>button {
-    color: white;
-    background: linear-gradient(90deg, #ffcc00, #ff9933);
-    border-radius: 10px;
+    color: #262730;
+    background: linear-gradient(90deg, #D4AF37, #B8860B);  /* Metallic gold to darker gold */
+    border-radius: 5px;
     font-weight: bold;
     border: none;
     padding: 0.5em 1em;
+}
+
+.stButton > button:hover {
+    background: linear-gradient(90deg, #B8860B, #D4AF37);
+    color: #262730;
+    border: none;
 }
 
 /* Centrer le logo */
@@ -90,4 +96,42 @@ body {
     display: flex;
     justify-content: center;
     margin-bottom: 20px;
+}
+
+/* Override Streamlit's default styles */
+.stSelectbox, .stMultiSelect {
+    background-color: #262730;
+}
+
+/* Style for sidebar selections */
+.streamlit-expanderHeader, .streamlit-expanderContent {
+    background-color: #262730 !important;
+    color: #D4AF37 !important;  /* Metallic gold */
+}
+
+/* Style for multiselect/select boxes */
+.stMultiSelect > div[data-baseweb="select"] > div {
+    background-color: #262730;
+    border-color: #D4AF37;  /* Metallic gold */
+}
+
+/* Style for sliders */
+.stSlider > div > div > div {
+    color: #D4AF37;  /* Metallic gold */
+}
+
+/* Style for radio buttons and checkboxes */
+.stRadio > label, .stCheckbox > label {
+    color: #D4AF37 !important;  /* Metallic gold */
+}
+
+/* Style for number inputs */
+.stNumberInput > div > div > input {
+    color: #D4AF37;  /* Metallic gold */
+    border-color: #D4AF37;
+}
+
+/* Progress bar color */
+.stProgress > div > div > div > div {
+    background-color: #D4AF37;  /* Metallic gold */
 }

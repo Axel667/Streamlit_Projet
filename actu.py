@@ -111,31 +111,43 @@ def render_actu_page():
         (df_articles_llm['sentiment'] <= sentiment_range[1])
     ]
 
-    # Champ de recherche dans les titres
-    search_query = st.sidebar.text_input("Recherche dans les titres")
-    if search_query:
-        df_filtered = df_filtered[df_filtered['title'].str.contains(search_query, case=False, na=False)]
-
-    # NOUVELLE ORGANISATION : Articles en premier
-    st.markdown("### 📰 Articles")
-    
-    # Pagination simplifiée
+    # Calculate pagination values first
     articles_per_page = 1
     total_articles = len(df_filtered)
     total_pages = (total_articles + articles_per_page - 1) // articles_per_page
+
+    # Pagination and search in the same row
+    col1, col2, col3 = st.columns([2, 1, 2])
     
-    # Centrer le sélecteur de page
-    _, col2, _ = st.columns([1, 2, 1])
+    with col1:
+        search_query = st.text_input(
+            "Recherche dans les titres", 
+            placeholder="Tapez pour rechercher...",
+            key="article_search"
+        )
+    
     with col2:
         current_page = st.number_input(
             f"Article ({total_articles} au total)", 
             min_value=1, 
             max_value=max(1, total_pages), 
-            value=1
+            value=1,
+            key="page_selector"
         )
+
+    # Apply search filter after pagination calculation
+    if search_query:
+        df_filtered = df_filtered[df_filtered['title'].str.contains(search_query, case=False, na=False)]
+        # Recalculate pagination after search
+        total_articles = len(df_filtered)
+        total_pages = (total_articles + articles_per_page - 1) // articles_per_page
 
     start_idx = (current_page - 1) * articles_per_page
     end_idx = min(start_idx + articles_per_page, total_articles)
+
+    # NOUVELLE ORGANISATION : Articles en premier
+    st.markdown("### 📰 Articles")
+
     
     # Afficher l'article de la page courante
     for idx in range(start_idx, end_idx):

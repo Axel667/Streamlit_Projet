@@ -385,6 +385,9 @@ def render_benchmarks_page():
     else:
         st.error("Aucune donnée disponible. Vérifiez la connexion API ou réessayez plus tard.")
 
+
+
+
 if __name__ == "__main__":
     from accueil import main
     main()

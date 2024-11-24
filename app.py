@@ -73,7 +73,7 @@ def render_datasets_page():
             filtered_df = filtered_df[filtered_df['Tags'].apply(lambda x: any(tag in tags_filter for tag in (x or [])))]
 
         # Search Bar
-        search_query = st.text_input("Rechercher un modèle", value="")
+        search_query = st.text_input("Rechercher un modèle", value="", placeholder="Par exemple : GPT, LLAMA, MISTRAL ...")
         if search_query:
             filtered_df = filtered_df[filtered_df['ID'].str.contains(search_query, case=False, na=False)]
 

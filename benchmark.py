@@ -19,7 +19,6 @@ def fetch_leaderboard_data():
             "Submission Date": "submission_date",
             "Average ⬆️": "score",
             "Precision": "precision",
-            # Other columns as needed
             "IFEval": "IFEval",
             "BBH": "BBH",
             "CO₂ cost (kg)": "co2_cost_kg",
@@ -71,9 +70,9 @@ def fetch_leaderboard_data():
 
 def render_benchmarks_page():
     if "active_page" not in st.session_state:
-        st.session_state["active_page"] = "🏠 Accueil"
+        st.session_state["active_page"] = "Accueil"
 
-    st.markdown("<h1 class='title'>Tableau de Bord des Modèles LLM Open Source</h1>", unsafe_allow_html=True)
+    st.markdown("<h1 style='color:#FFD700;'>Tableau de Bord des Modèles LLM Open Source</h1>", unsafe_allow_html=True)
     st.markdown("<p class='subtitle'>Explorez les données de performance des modèles de langage :</p>", unsafe_allow_html=True)
 
     # Fetch leaderboard data
@@ -110,8 +109,7 @@ def render_benchmarks_page():
         selected_models = st.multiselect(
             "Rechercher et sélectionner des modèles",
             options=all_models,
-            help="Tapez pour rechercher et sélectionner plusieurs modèles",
-            placeholder="Commencez à taper pour rechercher des modèles..."
+            placeholder="Choisissez une option"
         )
         
         if selected_models:  # Only filter if models are selected
@@ -137,8 +135,6 @@ def render_benchmarks_page():
         # Combine default and selected additional columns
         display_columns = default_columns + additional_columns_selected
 
-        
-
         # Proceed with plotting
         if benchmark_metric_columns:
             # Prepare data for plotting
@@ -158,19 +154,16 @@ def render_benchmarks_page():
             df_melted = df_melted.dropna(subset=['metric_value'])
 
             if not df_melted.empty:
-                st.markdown("### Évolution des Performances par Type de Modèle")
+                st.markdown("<h2 style='color:#FFD700;'>Évolution des Performances par Type de Modèle</h2>", unsafe_allow_html=True)
                 col1, col2 = st.columns([2, 1])
                 with col1:
                     st.markdown("""
                     Cette visualisation met en évidence :
-                    - 📈 L'évolution des performances pour chaque métrique au fil du temps
-                    - 🏆 Les types des modèles les plus performants à chaque période
-                    - 📊 La progression des différentes architectures de modèles
-                
-                    
-
+                    - L'évolution des performances pour chaque métrique au fil du temps
+                    - Les types des modèles les plus performants à chaque période
+                    - La progression des différentes architectures de modèles
                     """)
-                
+
                 # Time interval selection
                 time_interval = st.selectbox(
                     "Sélectionner l'intervalle de temps",
@@ -216,10 +209,9 @@ def render_benchmarks_page():
                 st.write("No data available for the selected benchmark metrics.")
         else:
             st.write("Please select at least one benchmark metric to plot.")
-
         # Plot: Model types distribution
         if "type" in filtered_df.columns:
-            st.markdown("### Répartition des architectures de modèles")
+            st.markdown("<h2 style='color:#FFD700;'>Répartition des Architectures de Modèles</h2>", unsafe_allow_html=True)
             st.markdown("Ce graphique circulaire illustre la diversité des approches techniques utilisées dans le développement des modèles de langage.")
             fig_pie = px.pie(
                 filtered_df,
@@ -230,7 +222,7 @@ def render_benchmarks_page():
             st.plotly_chart(fig_pie)
 
         # **Cumulative CO₂ Cost Plot**
-        st.markdown("### Coût CO₂ Cumulé au fil du temps (en kg)")
+        st.markdown("<h2 style='color:#FFD700;'>Coût CO₂ Cumulé au Fil du Temps (en kg)</h2>", unsafe_allow_html=True)
         st.markdown("Cette courbe révèle l'évolution de l'empreinte carbone totale liée à l'entraînement des modèles, soulignant l'importance des considérations environnementales dans le développement de l'IA.")
 
         if 'submission_date' in filtered_df.columns and 'co2_cost_kg' in filtered_df.columns:
@@ -254,15 +246,15 @@ def render_benchmarks_page():
             st.write("Les données de coût CO₂ ne sont pas disponibles.")
 
         # **Performance vs. CO₂ Cost Analysis**
-        st.markdown("### Analyse Performance vs Impact Environnemental")
-        
+        st.markdown("<h2 style='color:#FFD700;'>Analyse Performance vs Impact Environnemental</h2>", unsafe_allow_html=True)
+
         st.markdown("""
-        #### 🤔 Le coût Coût CO₂ justifie-t-il les performances ?
-        
+        #### Le coût CO₂ justifie-t-il les performances ?
+
         Cette visualisation révèle la relation cruciale entre performance et impact écologique :
-        - 🎯 Position : Rapport performance/coût CO₂
-        - 📏 Taille : Nombre de paramètres (en milliards)
-        - 🎨 Couleur : Type d'architecture
+        - Position : Rapport performance/coût CO₂
+        - Taille : Nombre de paramètres (en milliards)
+        - Couleur : Type d'architecture
         """)
 
         benchmark_options = benchmark_metric_columns + ['score']
@@ -335,7 +327,7 @@ def render_benchmarks_page():
             """)
 
         # Add table section at the bottom with scrollable layout
-        st.markdown("### 📋 Liste Complète des Modèles")
+        st.markdown("<h2 style='color:#FFD700;'>📋 Liste Complète des Modèles</h2>", unsafe_allow_html=True)
 
         # Prepare the DataFrame display
         df_to_display = filtered_df[display_columns + ['model_link']].copy()
@@ -356,10 +348,10 @@ def render_benchmarks_page():
             </div>
         """.format(html_table), unsafe_allow_html=True)
 
-        # Après la section Liste Complète des Modèles
+        # Documentation des métriques d'évaluation
         st.markdown("""
         ---
-        ### 📚 Documentation des Métriques d'Évaluation
+        <h2 style='color:#FFD700;'>📚 Documentation des Métriques d'Évaluation</h2>
 
         Nous évaluons les modèles sur 6 benchmarks clés utilisant le framework Eleuther AI Language Model Evaluation Harness:
 
@@ -380,13 +372,10 @@ def render_benchmarks_page():
 
         #### [MMLU-PRO](https://arxiv.org/abs/2406.01574)
         Version améliorée du test MMLU avec 10 choix au lieu de 4, exigeant plus de raisonnement et validée par des experts.
-        """)
+        """, unsafe_allow_html=True)
 
     else:
         st.error("Aucune donnée disponible. Vérifiez la connexion API ou réessayez plus tard.")
-
-
-
 
 if __name__ == "__main__":
     from accueil import main

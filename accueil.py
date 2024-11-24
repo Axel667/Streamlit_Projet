@@ -3,34 +3,22 @@ from app import render_datasets_page
 from benchmark import render_benchmarks_page
 from actu import render_actu_page  # Nouvel import
 
-# Import des fonctions de rendu après render_accueil_page pour éviter les imports circulaires
 def render_accueil_page():
     st.markdown("<h1 style='text-align: center; color: #FFD700;'>Bienvenue sur HuggingFace Explorer</h1>", unsafe_allow_html=True)
     
+    st.markdown("<h3 style='text-align: center; color: #FFD700;'>Contexte du Projet</h3>", unsafe_allow_html=True)
+
+    st.markdown("""
+    Ce projet est en lien avec notre projet IA de finetuning de LLM. Cette app permet d'explorer les LLM en open data via leur fine-tuning, avec une analyse approfondie des modèles et des données.
+    """)
+
+    st.markdown("<h3 style='text-align: center; color: #FFD700;'>Fonctionnalités</h3>", unsafe_allow_html=True)
+
     # Contenu de la page d'accueil
     st.markdown("""
-    ### 🎯 Notre Mission
-    
-    Ce site a pour but d'explorer et d'analyser les modèles open source disponibles sur HuggingFace. 
-    
-    ### 📚 Contexte du Projet
-    
-    Ce projet a été développé dans le cadre de notre projet IA avec plusieurs objectifs :
-    
-    - 🔍 Explorer la diversité des modèles disponibles
-    - 📊 Analyser les performances des différents modèles
-    - 🌍 Évaluer l'impact environnemental des modèles
-    - 💡 Comprendre les tendances dans le développement des LLMs
-    
-    ### 🚀 Fonctionnalités
-    
-    - **Catalogue des Modèles** : Explorez la base de données complète des modèles
-    - **Benchmarks** : Analysez les performances des modèles LLM
-    - **Visualisations** : Découvrez des graphiques interactifs et des analyses détaillées
-    
-    ### 👥 Navigation
-    
-    Utilisez le menu de gauche pour naviguer entre les différentes sections du site.
+    - **Catalogue des Modèles** : Explorez et visualisez les modèles Hugging Face (populaires, thèmes, téléchargements).
+    - **Benchmarks** : Analysez les performances des modèles via des données de référence.
+    - **Actualités** : Consultez et filtrez les articles sur les LLM selon le sentiment, la période ou les pays.
     """)
 
 def main():

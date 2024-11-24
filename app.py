@@ -33,11 +33,19 @@ def fetch_models_data():
     else:
         st.error(f"Erreur de chargement des données ({response.status_code})")
         return pd.DataFrame()
+    
+    
+
+    
 
 def render_datasets_page():
     # Titre principal
     st.markdown("<h1 style='text-align: center; color: #FFD700;'>Catalogue des Modèles Hugging Face</h1>", unsafe_allow_html=True)
-    st.markdown("Ce tableau de bord utilise l'API de Hugging Face pour extraire des informations sur les modèles hébergés, comme leur date de création, leur popularité ou encore leurs statistiques d'utilisation.")
+    st.markdown(
+        "Ce tableau de bord utilise l'API de Hugging Face pour extraire des informations sur les modèles hébergés. "
+        "Vous pouvez explorer cette API [ici](https://huggingface.co/spaces/enzostvs/hub-api-playground).",
+        unsafe_allow_html=True
+    )
 
     df = fetch_models_data()
     if not df.empty:
@@ -73,7 +81,8 @@ def render_datasets_page():
         if search_query:
             filtered_df = filtered_df[filtered_df['ID'].str.contains(search_query, case=False, na=False)]
 
-        st.markdown("#### 🏆 Modèle le Plus Populaire par Mois")
+        # Titre visualisation
+        st.markdown("<h2 style='color: #FFD700;'>🏆 Modèle le Plus Populaire par Mois</h2>", unsafe_allow_html=True)
         st.markdown("Ce graphique met en avant le modèle le plus aimé chaque mois, basé sur le nombre de likes enregistrés.")
 
         # Préparation des données
@@ -137,7 +146,7 @@ def render_datasets_page():
         st.markdown("**Interprétation :** Ce graphique montre les modèles ayant reçu le plus de likes chaque mois. Les périodes de forte activité ou les modèles populaires sont clairement identifiables.")
 
         # Tags Word Cloud
-        st.markdown("### ☁️ Nuage de Tags")
+        st.markdown("<h2 style='color: #FFD700;'>☁️ Nuage de Tags</h2>", unsafe_allow_html=True)
         st.markdown("Cette visualisation représente les tags les plus fréquents dans les modèles.")
 
         tags_series = pd.Series([tag for sublist in filtered_df['Tags'].dropna() for tag in sublist])

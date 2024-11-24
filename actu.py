@@ -32,7 +32,7 @@ def render_actu_page():
 
         # Colonnes à inclure
         columns_to_include = [
-            'lang', 'url', 'sentiment', 'date', 'relevance', 'title', 'location', 'isDuplicate', 'sim'
+            'lang', 'url', 'sentiment', 'date', 'relevance', 'title', 'location', 'sim'
         ]
 
         articles = []

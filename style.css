@@ -38,6 +38,43 @@ body {
     overflow: hidden;
 }
 
+/* Style for dataframe table */
+.dataframe {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.dataframe th {
+    background-color: #262730;
+    color: #FFD700;
+    padding: 8px;
+    border: 1px solid #444;
+    text-align: center;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.dataframe td {
+    padding: 8px;
+    border: 1px solid #444;
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dataframe tr:hover td {
+    background-color: rgba(255, 215, 0, 0.1);
+}
+
+/* Ensure links are visible */
+.dataframe a {
+    color: #FFD700;
+    text-decoration: none;
+}
+
+.dataframe a:hover {
+    text-decoration: underline;
+}
+
 /* Bouton arrondi */
 .stButton>button {
     color: white;

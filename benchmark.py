@@ -90,14 +90,14 @@ def render_benchmarks_page():
             return
 
         # Sidebar for filters
-        st.sidebar.header("Filter Options")
+        st.sidebar.header("Options de Filtrage")
         precision_filter = st.sidebar.multiselect(
-            "Precision",
+            "Précision",
             options=df["precision"].dropna().unique(),
             default=df["precision"].dropna().unique()
         )
         model_type_filter = st.sidebar.multiselect(
-            "Model Type",
+            "Type de Modèle",
             options=df["type"].dropna().unique(),
             default=df["type"].dropna().unique()
         )
@@ -105,13 +105,20 @@ def render_benchmarks_page():
         # Apply filters
         filtered_df = df[df["precision"].isin(precision_filter) & df["type"].isin(model_type_filter)]
 
-        # Search box
-        search_query = st.text_input("Search for a model", value="")
-        if search_query:
-            filtered_df = filtered_df[filtered_df["model_name"].str.contains(search_query, case=False, na=False)]
+        # Search box with real-time filtering and multi-select
+        all_models = filtered_df["model_name"].unique()
+        selected_models = st.multiselect(
+            "Rechercher et sélectionner des modèles",
+            options=all_models,
+            help="Tapez pour rechercher et sélectionner plusieurs modèles",
+            placeholder="Commencez à taper pour rechercher des modèles..."
+        )
+        
+        if selected_models:  # Only filter if models are selected
+            filtered_df = filtered_df[filtered_df["model_name"].isin(selected_models)]
 
         # **Display Options**
-        st.sidebar.header("Display Options")
+        st.sidebar.header("Options d'Affichage")
 
         # Default columns to display
         default_columns = ['model_name'] + benchmark_metric_columns + ['score']
@@ -122,7 +129,7 @@ def render_benchmarks_page():
         additional_columns = [col for col in all_columns if col not in default_columns and col not in internal_columns]
 
         additional_columns_selected = st.sidebar.multiselect(
-            "Select additional columns to display",
+            "Sélectionner des colonnes supplémentaires",
             options=additional_columns,
             default=[]
         )
@@ -151,8 +158,18 @@ def render_benchmarks_page():
             df_melted = df_melted.dropna(subset=['metric_value'])
 
             if not df_melted.empty:
-                st.markdown("### Évolution temporelle des performances")
-                st.markdown("Cette visualisation met en évidence les modèles les plus performants pour chaque métrique au fil du temps, permettant d'identifier les tendances et les progrès réalisés dans le domaine.")
+                st.markdown("### Évolution des Performances par Type de Modèle")
+                col1, col2 = st.columns([2, 1])
+                with col1:
+                    st.markdown("""
+                    Cette visualisation met en évidence :
+                    - 📈 L'évolution des performances pour chaque métrique au fil du temps
+                    - 🏆 Les types des modèles les plus performants à chaque période
+                    - 📊 La progression des différentes architectures de modèles
+                
+                    
+
+                    """)
                 
                 # Time interval selection
                 time_interval = st.selectbox(
@@ -186,11 +203,11 @@ def render_benchmarks_page():
                     x="time_period",
                     y="metric_value",
                     color='benchmark_metric',
-                    title="Top Benchmark Metrics Over Time",
+                    title=False,
                     labels={
-                        "time_period": "Time Period",
-                        "metric_value": "Metric Value",
-                        "benchmark_metric": "Benchmark Metric"
+                        "time_period": "Période",
+                        "metric_value": "Valeur Métrique",
+                        "benchmark_metric": "Métrique"
                     },
                     markers=True,
                 )
@@ -225,91 +242,101 @@ def render_benchmarks_page():
                 co2_df,
                 x='submission_date',
                 y='cumulative_co2',
-                title='Cumulative CO₂ Cost Over Time',
+                title='Coût CO₂ Cumulé au Fil du Temps',
                 labels={
-                    'submission_date': 'Submission Date',
-                    'cumulative_co2': 'Cumulative CO₂ Cost (kg)'
+                    'submission_date': 'Date de Soumission',
+                    'cumulative_co2': 'Coût CO₂ Cumulé (kg)'
                 },
                 markers=True
             )
             st.plotly_chart(fig_co2)
         else:
-            st.write("CO₂ cost data is not available to plot.")
+            st.write("Les données de coût CO₂ ne sont pas disponibles.")
 
         # **Performance vs. CO₂ Cost Analysis**
         st.markdown("### Analyse Performance vs Impact Environnemental")
-        st.markdown("Cette visualisation permet d'explorer la relation entre les performances des modèles et leur coût environnemental, mettant en évidence le compromis entre efficacité et durabilité.")
+        
+        st.markdown("""
+        #### 🤔 Le coût Coût CO₂ justifie-t-il les performances ?
+        
+        Cette visualisation révèle la relation cruciale entre performance et impact écologique :
+        - 🎯 Position : Rapport performance/coût CO₂
+        - 📏 Taille : Nombre de paramètres (en milliards)
+        - 🎨 Couleur : Type d'architecture
+        """)
 
         benchmark_options = benchmark_metric_columns + ['score']
+        
+        # Ajouter les descriptions des métriques
+        metric_descriptions = {
+            "IFEval": "Évalue la capacité du modèle à suivre des instructions explicites.",
+            "BBH": "23 tâches complexes testant le raisonnement algorithmique et la compréhension du langage.",
+            "MATH Lvl 5": "Problèmes de mathématiques de niveau compétition lycée.",
+            "GPQA": "Questions expertes en sciences validées par des doctorants.",
+            "MUSR": "Problèmes complexes nécessitant un raisonnement sur un long contexte.",
+            "MMLU-PRO": "Test de connaissances avancées avec 10 choix multiples.",
+            "score": "Score moyen global sur l'ensemble des métriques."
+        }
+
         selected_benchmark = st.selectbox(
             "Sélectionner la métrique de performance :",
             options=benchmark_options,
             index=benchmark_options.index('score') if 'score' in benchmark_options else 0
         )
 
-        size_options = ['params_b', 'co2_cost_kg']
-        size_variable = st.selectbox(
-            "Variable pour la taille des points :",
-            options=size_options,
-            index=0
-        )
+        # Afficher la description de la métrique sélectionnée
+        st.markdown(f"*{metric_descriptions[selected_benchmark]}*")
 
-        color_options = ['precision', 'type']
-        color_variable = st.selectbox(
-            "Variable pour la couleur des points :",
-            options=color_options,
-            index=0
-        )
-
-        required_columns_for_plot = [selected_benchmark, 'co2_cost_kg', size_variable, color_variable]
+        required_columns_for_plot = [selected_benchmark, 'co2_cost_kg', 'params_b', 'type']
         missing_columns = [col for col in required_columns_for_plot if col not in filtered_df.columns]
         if missing_columns:
-            st.write(f"The following columns are missing for plotting: {', '.join(missing_columns)}")
+            st.write(f"Colonnes manquantes pour le graphique : {', '.join(missing_columns)}")
         else:
             analysis_df = filtered_df.dropna(subset=required_columns_for_plot)
-            analysis_df[size_variable] = pd.to_numeric(analysis_df[size_variable], errors='coerce')
+            analysis_df['params_b'] = pd.to_numeric(analysis_df['params_b'], errors='coerce')
 
-            # Filter out non-positive or missing values in size_variable
-            analysis_df = analysis_df[analysis_df[size_variable] > 0]
-            analysis_df = analysis_df.dropna(subset=[size_variable])
+            # Filter out non-positive or missing values
+            analysis_df = analysis_df[analysis_df['params_b'] > 0]
+            analysis_df = analysis_df.dropna(subset=['params_b'])
 
             fig_analysis = px.scatter(
                 analysis_df,
                 x='co2_cost_kg',
                 y=selected_benchmark,
-                size=size_variable,
-                color=color_variable,
+                size='params_b',
+                color='type',
                 hover_name='model_name',
-                title='Model Performance vs. CO₂ Cost',
+                title=False,
                 labels={
-                    'co2_cost_kg': 'CO₂ Cost (kg)',
-                    selected_benchmark: selected_benchmark,
-                    size_variable: size_variable,
-                    color_variable: color_variable
+                    'co2_cost_kg': 'Coût CO₂ (kg)',
+                    selected_benchmark: 'Performance',
+                    'params_b': 'Paramètres (B)',
+                    'type': 'Type de Modèle'
                 },
-                size_max=40
+                size_max=45,
             )
+
+            # Update hover template to include all relevant information
+            fig_analysis.update_traces(
+                hovertemplate="<b>%{hovertext}</b><br>" +
+                             "Performance: %{y:.2f}<br>" +
+                             "CO₂: %{x:.2f} kg<br>" +
+                             "Paramètres: %{marker.size:.1f}B<br>" +
+                             "Type: %{marker.color}<br>" +
+                             "<extra></extra>"
+            )
+
             st.plotly_chart(fig_analysis)
+            
+            # Ajouter le conseil après le graphique
+            st.markdown("""
+            💡 **Conseil:** Observez les modèles qui se démarquent par leur efficacité énergétique 
+            tout en maintenant de bonnes performances.
+            """)
 
         # Add table section at the bottom with scrollable layout
         st.markdown("### 📋 Liste Complète des Modèles")
-        
-        # Add custom CSS to expand the dataframe container
-        st.markdown("""
-            <style>
-                .block-container {
-                    padding-left: 2rem;
-                    padding-right: 2rem;
-                }
-                /* Override Streamlit's default container width for dataframes */
-                [data-testid="stDataFrame"] {
-                    width: 100vw !important;
-                    margin-left: calc(-2rem);
-                    margin-right: calc(-2rem);
-                }
-            </style>
-        """, unsafe_allow_html=True)
-        
+
         # Prepare the DataFrame display
         df_to_display = filtered_df[display_columns + ['model_link']].copy()
         df_to_display['model_name'] = df_to_display.apply(
@@ -329,8 +356,34 @@ def render_benchmarks_page():
             </div>
         """.format(html_table), unsafe_allow_html=True)
 
+        # Après la section Liste Complète des Modèles
+        st.markdown("""
+        ---
+        ### 📚 Documentation des Métriques d'Évaluation
+
+        Nous évaluons les modèles sur 6 benchmarks clés utilisant le framework Eleuther AI Language Model Evaluation Harness:
+
+        #### [IFEval](https://arxiv.org/abs/2311.07911)
+        Test de la capacité du modèle à suivre des instructions explicites, en se concentrant sur le format plutôt que le contenu.
+
+        #### [BBH (Big Bench Hard)](https://arxiv.org/abs/2210.09261)
+        23 tâches complexes évaluant le raisonnement algorithmique, la compréhension du langage et les connaissances générales.
+
+        #### [MATH](https://arxiv.org/abs/2103.03874)
+        Problèmes de mathématiques de niveau compétition lycée, formatés en LaTeX avec figures en Asymptote.
+
+        #### [GPQA](https://arxiv.org/abs/2311.12022)
+        Questions expertes créées par des doctorants en biologie, physique et chimie, validées pour leur précision.
+
+        #### [MuSR](https://arxiv.org/abs/2310.16049)
+        Problèmes complexes de 1000 mots nécessitant un raisonnement multi-étapes et une analyse de contexte approfondie.
+
+        #### [MMLU-PRO](https://arxiv.org/abs/2406.01574)
+        Version améliorée du test MMLU avec 10 choix au lieu de 4, exigeant plus de raisonnement et validée par des experts.
+        """)
+
     else:
-        st.error("No data available to display. Check the API connection or try again later.")
+        st.error("Aucune donnée disponible. Vérifiez la connexion API ou réessayez plus tard.")
 
 if __name__ == "__main__":
     from accueil import main

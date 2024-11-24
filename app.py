@@ -33,10 +33,6 @@ def fetch_models_data():
     else:
         st.error(f"Erreur de chargement des données ({response.status_code})")
         return pd.DataFrame()
-    
-    
-
-    
 
 def render_datasets_page():
     # Titre principal
@@ -65,7 +61,7 @@ def render_datasets_page():
             st.metric("Modèles Privés", f"{df['Privé'].sum()}")
 
         # Sidebar filters
-        st.sidebar.markdown("### 🔍 Filtres")
+        st.sidebar.markdown("### Filtres")
         auteur_filter = st.sidebar.multiselect("Auteur", options=df['Auteur'].dropna().unique())
         tags_filter = st.sidebar.multiselect("Tags", options=pd.Series([tag for sublist in df['Tags'].dropna() for tag in sublist]).unique())
 
@@ -82,8 +78,8 @@ def render_datasets_page():
             filtered_df = filtered_df[filtered_df['ID'].str.contains(search_query, case=False, na=False)]
 
         # Titre visualisation
-        st.markdown("<h2 style='color: #FFD700;'>🏆 Modèle le Plus Populaire par Mois</h2>", unsafe_allow_html=True)
-        st.markdown("Ce graphique met en avant le modèle le plus aimé chaque mois, basé sur le nombre de likes enregistrés.")
+        st.markdown("<h2 style='color: #FFD700;'>Modèle le Plus Populaire par Mois</h2>", unsafe_allow_html=True)
+        st.markdown("Ce graphique montre le modèle le plus likés chaque mois.")
 
         # Préparation des données
         timeline_df = filtered_df.copy()
@@ -103,8 +99,8 @@ def render_datasets_page():
             mode='markers+text',
             marker=dict(
                 color='#FFD700',
-                size=15,
-                symbol='star',
+                size=8,
+                symbol='circle',
             ),
             text=top_monthly['ID'].apply(lambda x: x.split('/')[-1]),  # Juste le nom du modèle
             textposition="top center",
@@ -125,7 +121,7 @@ def render_datasets_page():
         
         # Mise en page
         fig.update_layout(
-            title="Modèle le Plus Liké Chaque Mois",
+            title="Modèle le Plus Populaire par Mois",
             xaxis_title="Date",
             yaxis_title="Nombre de Likes",
             template="plotly_dark",
@@ -143,10 +139,9 @@ def render_datasets_page():
         
         # Afficher le graphique
         st.plotly_chart(fig, use_container_width=True)
-        st.markdown("**Interprétation :** Ce graphique montre les modèles ayant reçu le plus de likes chaque mois. Les périodes de forte activité ou les modèles populaires sont clairement identifiables.")
 
         # Tags Word Cloud
-        st.markdown("<h2 style='color: #FFD700;'>☁️ Nuage de Tags</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color: #FFD700;'>Camembert des Tags</h2>", unsafe_allow_html=True)
         st.markdown("Cette visualisation représente les tags les plus fréquents dans les modèles.")
 
         tags_series = pd.Series([tag for sublist in filtered_df['Tags'].dropna() for tag in sublist])
@@ -160,10 +155,10 @@ def render_datasets_page():
                 color_discrete_sequence=px.colors.sequential.Sunset
             )
             st.plotly_chart(fig_tags, use_container_width=True)
-            st.markdown("**Interprétation :** Ce nuage montre les thèmes dominants parmi les modèles disponibles.")
+            st.markdown("**Interprétation :** Ce camembert montre les thèmes dominants parmi les modèles disponibles.")
 
         # Liste des modèles
-        st.markdown("<h2 style='color: #FFD700;'>📋 Liste des Modèles</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color: #FFD700;'>Liste des Modèles</h2>", unsafe_allow_html=True)
         st.markdown("Ce tableau affiche les modèles disponibles après application des filtres et critères de recherche.")
         st.dataframe(filtered_df[[
             "ID", "Auteur", "Gated", "Inference", "Dernière modification",

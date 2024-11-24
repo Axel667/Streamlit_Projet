@@ -35,7 +35,9 @@ def fetch_models_data():
         return pd.DataFrame()
 
 def render_datasets_page():
+    # Titre principal
     st.markdown("<h1 style='text-align: center; color: #FFD700;'>Catalogue des Modèles Hugging Face</h1>", unsafe_allow_html=True)
+    st.markdown("Ce tableau de bord utilise l'API de Hugging Face pour extraire des informations sur les modèles hébergés, comme leur date de création, leur popularité ou encore leurs statistiques d'utilisation.")
 
     df = fetch_models_data()
     if not df.empty:
@@ -44,7 +46,6 @@ def render_datasets_page():
         df['Date de création'] = pd.to_datetime(df['Date de création'], errors='coerce')
 
         # Metrics Section
-        st.markdown("### 🚀 Aperçu des Modèles")
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.metric("Nombre de Modèles", f"{len(df):,}")
@@ -72,19 +73,9 @@ def render_datasets_page():
         if search_query:
             filtered_df = filtered_df[filtered_df['ID'].str.contains(search_query, case=False, na=False)]
 
-        # Data Display
-        st.markdown("<h2 style='color: #FFD700;'>📋 Liste des Modèles</h2>", unsafe_allow_html=True)
-        st.dataframe(filtered_df[[
-            "ID", "Auteur", "Gated", "Inference", "Dernière modification",
-            "Likes", "Trending Score", "Privé", "Téléchargements",
-            "Tags", "Library", "Date de création"
-        ]])
-
-        # Visualizations
-        st.markdown("### 📊 Visualisations")
-
         st.markdown("#### 🏆 Modèle le Plus Populaire par Mois")
-        
+        st.markdown("Ce graphique met en avant le modèle le plus aimé chaque mois, basé sur le nombre de likes enregistrés.")
+
         # Préparation des données
         timeline_df = filtered_df.copy()
         timeline_df['Mois'] = pd.to_datetime(timeline_df['Date de création']).dt.to_period('M')
@@ -143,9 +134,12 @@ def render_datasets_page():
         
         # Afficher le graphique
         st.plotly_chart(fig, use_container_width=True)
-        
+        st.markdown("**Interprétation :** Ce graphique montre les modèles ayant reçu le plus de likes chaque mois. Les périodes de forte activité ou les modèles populaires sont clairement identifiables.")
+
         # Tags Word Cloud
         st.markdown("### ☁️ Nuage de Tags")
+        st.markdown("Cette visualisation représente les tags les plus fréquents dans les modèles.")
+
         tags_series = pd.Series([tag for sublist in filtered_df['Tags'].dropna() for tag in sublist])
         if not tags_series.empty:
             tag_counts = tags_series.value_counts().reset_index(name="count")
@@ -157,6 +151,16 @@ def render_datasets_page():
                 color_discrete_sequence=px.colors.sequential.Sunset
             )
             st.plotly_chart(fig_tags, use_container_width=True)
+            st.markdown("**Interprétation :** Ce nuage montre les thèmes dominants parmi les modèles disponibles.")
+
+        # Liste des modèles
+        st.markdown("<h2 style='color: #FFD700;'>📋 Liste des Modèles</h2>", unsafe_allow_html=True)
+        st.markdown("Ce tableau affiche les modèles disponibles après application des filtres et critères de recherche.")
+        st.dataframe(filtered_df[[
+            "ID", "Auteur", "Gated", "Inference", "Dernière modification",
+            "Likes", "Trending Score", "Privé", "Téléchargements",
+            "Tags", "Library", "Date de création"
+        ]])
     else:
         st.error("Aucune donnée disponible.")
 

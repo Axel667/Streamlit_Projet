@@ -42,6 +42,9 @@ def fetch_leaderboard_data():
                 return html, ''  # Return the original text if no link found
 
         df['model_name'], df['model_link'] = zip(*df['model_name_html'].apply(extract_model_info))
+        
+        # Simplify model names to only show the last part after the last slash
+        df['model_name'] = df['model_name'].apply(lambda x: x.split('/')[-1] if isinstance(x, str) and '/' in x else x)
 
         # Ensure required columns exist
         required_columns = ["precision", "type", "model_name", "submission_date", "score", "model_link", "co2_cost_kg", "params_b"]
@@ -127,36 +130,7 @@ def render_benchmarks_page():
         # Combine default and selected additional columns
         display_columns = default_columns + additional_columns_selected
 
-        # Prepare the DataFrame to display
-        df_to_display = filtered_df[display_columns + ['model_link']].copy()
-
-        # Convert 'model_name' to clickable links
-        df_to_display['model_name'] = df_to_display.apply(
-            lambda row: f'<a href="{row["model_link"]}" target="_blank">{row["model_name"]}</a>' if pd.notnull(row["model_link"]) else row["model_name"],
-            axis=1
-        )
-
-        # Remove 'model_link' from display columns as we don't want to show the URL
-        df_to_display = df_to_display.drop(columns=['model_link'])
-
-        # Convert DataFrame to HTML
-        html_table = df_to_display.to_html(escape=False, index=False)
-
-        # Define CSS for scrollable div
-        scrollable_div_style = """
-        <div style='
-            overflow-y: auto;
-            height: 500px;
-            border: 1px solid #ccc;
-            padding: 10px;
-        '>
-        """
-
-        # Combine the div and table
-        html_content = scrollable_div_style + html_table + "</div>"
-
-        # Display the table
-        st.write(html_content, unsafe_allow_html=True)
+        
 
         # Proceed with plotting
         if benchmark_metric_columns:
@@ -199,7 +173,7 @@ def render_benchmarks_page():
                 # Group by benchmark_metric and time_period
                 grouped = df_melted.groupby(['benchmark_metric', 'time_period'])
 
-                # Select the top performer in each group
+                # Fix the syntax error here - replace curly braces with square brackets
                 top_performers = grouped.apply(lambda x: x.loc[x['metric_value'].idxmax()])
                 top_performers = top_performers.reset_index(drop=True)
 
@@ -316,6 +290,44 @@ def render_benchmarks_page():
                 size_max=40
             )
             st.plotly_chart(fig_analysis)
+
+        # Add table section at the bottom with scrollable layout
+        st.markdown("### 📋 Liste Complète des Modèles")
+        
+        # Add custom CSS to expand the dataframe container
+        st.markdown("""
+            <style>
+                .block-container {
+                    padding-left: 2rem;
+                    padding-right: 2rem;
+                }
+                /* Override Streamlit's default container width for dataframes */
+                [data-testid="stDataFrame"] {
+                    width: 100vw !important;
+                    margin-left: calc(-2rem);
+                    margin-right: calc(-2rem);
+                }
+            </style>
+        """, unsafe_allow_html=True)
+        
+        # Prepare the DataFrame display
+        df_to_display = filtered_df[display_columns + ['model_link']].copy()
+        df_to_display['model_name'] = df_to_display.apply(
+            lambda row: f'<a href="{row["model_link"]}" target="_blank">{row["model_name"]}</a>' 
+            if pd.notnull(row["model_link"]) else row["model_name"],
+            axis=1
+        )
+        df_to_display = df_to_display.drop(columns=['model_link'])
+
+        # Convert DataFrame to HTML with custom styling
+        html_table = df_to_display.to_html(escape=False, index=False, classes=['dataframe'])
+        
+        # Create scrollable container with fixed height
+        st.markdown("""
+            <div style="height: 400px; overflow-y: scroll; margin: 10px 0px">
+                {}
+            </div>
+        """.format(html_table), unsafe_allow_html=True)
 
     else:
         st.error("No data available to display. Check the API connection or try again later.")

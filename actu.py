@@ -365,8 +365,3 @@ def render_actu_page():
 if __name__ == "__main__":
     from accueil import main
     main()
-    st.markdown(f"*Article {start_idx + 1} sur {total_articles}*")
-
-if __name__ == "__main__":
-    from accueil import main
-    main()

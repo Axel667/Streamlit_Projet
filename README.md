@@ -1,6 +1,10 @@
 # Streamlit_Projet
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io)
 
+# Hugging Face Explorer 🤗
+
+Bienvenue dans le projet **Hugging Face Explorer**, une application interactive développée pour explorer et analyser les modèles de langage open source hébergés sur la plateforme Hugging Face. Ce projet a été conçu dans le cadre de notre projet en Open data en lien avec notre projet IA du second semestre, avec un objectif principal : identifier et analyser les modèles les plus pertinents pour un projet de fine-tuning sur des modèles de langage (LLM).
+
 # How to Clone and Run the Project Locally
 
 ## Prerequisites
@@ -33,10 +37,6 @@ Launch the app by running the following command:
     ```bash
     streamlit run app.py
 
-# Hugging Face Explorer 🤗
-
-Bienvenue dans le projet **Hugging Face Explorer**, une application interactive développée pour explorer et analyser les modèles de langage open source hébergés sur la plateforme Hugging Face. Ce projet a été conçu dans le cadre de notre projet IA du second semestre, avec un objectif principal : identifier et analyser les modèles les plus pertinents pour un projet de fine-tuning sur des modèles de langage (LLM).
-
 ---
 
 ## 📝 Contexte du Projet
@@ -56,22 +56,30 @@ L'application est développée avec **Streamlit**, en s'appuyant sur les API et 
 - S'appuie sur l'API Hugging Face pour extraire des informations telles que les auteurs, les tags, les téléchargements, et les tendances de popularité.
 - **Visualisations :**
   - Un graphique temporel pour afficher le modèle le plus populaire chaque mois.
+  ![Modèle le plus populaire par mois](/images/1_temp.png)
   - Un camembert représentant les tags les plus fréquents parmi les modèles.
-  - Un tableau interactif permettant de filtrer et de rechercher des modèles.
+  ![Camembert des tags](/images/top_10tag.png)
 
 ### 2. Benchmarks
 - Compare les performances des modèles à l'aide du dataset **Open LLM Leaderboard**.
 - **Visualisations :**
   - Un graphique linéaire pour suivre l'évolution des performances des modèles par type.
+  ![Évolution des performances par type de modèle](/images/perf_evol.png)
   - Un diagramme circulaire montrant la répartition des types de modèles disponibles.
+  ![Répartition des types de modèles](/images/Distribution_type.png)
   - Une courbe illustrant l'empreinte carbone cumulée des modèles.
+  ![Coût CO₂ cumulé au fil du temps](/images/Co2.png)
   - Un nuage de points examinant la relation entre performances, coût CO₂, et taille des paramètres.
+  ![Score vs Coût CO₂](/images/score_co2.png)
 
 ### 3. Actualités
 - Agrège les articles récents sur les LLM via l'API **EventRegistry**.
 - **Visualisations :**
   - Une carte géographique représentant la répartition des articles par pays et leur sentiment moyen.
+  ![Carte géographique des articles](/images/map.png)
   - Un graphique à double axe montrant l'évolution du nombre d'articles publiés et de leur sentiment moyen.
+  ![Évolution temporelle des articles](/images/evol_article.png)
   - Un diagramme circulaire mettant en évidence les pays produisant le plus d'articles.
+  ![Répartition des articles par pays](/images/repartition_article_pays.png)
 
 ---

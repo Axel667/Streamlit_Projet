@@ -4,7 +4,7 @@ Bienvenue dans le projet **Hugging Face Explorer**, une application interactive 
 
 ---
 
-## Contexte du Projet
+# Contexte du Projet
 
 Ce projet a pour but de fournir une plateforme intuitive et riche en données, permettant de :
 - Explorer les modèles de langage open source et leurs caractéristiques (auteurs, tags, téléchargements, etc.).
@@ -15,9 +15,9 @@ L'application est développée avec **Streamlit**, en s'appuyant sur les API et 
 
 ---
 
-## Fonctionnalités Principales
+# Fonctionnalités Principales
 
-### 1. Catalogue des Modèles
+# 1. Catalogue des Modèles
 - S'appuie sur l'[API Hugging Face](https://huggingface.co/spaces/enzostvs/hub-api-playground) pour extraire des informations telles que les auteurs, les tags, les téléchargements, et les tendances de popularité.
 - **Visualisations :**
   - Un graphique temporel pour afficher le modèle le plus populaire chaque mois.
@@ -25,7 +25,7 @@ L'application est développée avec **Streamlit**, en s'appuyant sur les API et 
   - Un camembert représentant les tags les plus fréquents parmi les modèles.
     <img src="/images/top_10tag.png" alt="Camembert des tags" width="600">
 
-### 2. Benchmarks
+# 2. Benchmarks
 - Compare les performances des modèles à l'aide du [dataset Open LLM Leaderboard](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard).
 - **Visualisations :**
   - Un graphique linéaire pour suivre l'évolution des performances des modèles par type.
@@ -37,7 +37,7 @@ L'application est développée avec **Streamlit**, en s'appuyant sur les API et 
   - Un nuage de points examinant la relation entre performances, coût CO₂, et taille des paramètres.
     <img src="/images/score_co2.png" alt="Score vs Coût CO₂" width="600">
 
-### 3. Actualités
+# 3. Actualités
 - Agrège les articles récents sur les LLM via l'[API EventRegistry](https://newsapi.ai/documentation?tab=introduction).
 - **Visualisations :**
   - Une carte géographique représentant la répartition des articles par pays et leur sentiment moyen.
@@ -49,9 +49,9 @@ L'application est développée avec **Streamlit**, en s'appuyant sur les API et 
 
 ---
 
-## Comment cloner et exécuter le projet localement
+# Comment cloner et exécuter le projet localement
 
-### Prérequis
+# Prérequis
 Avant de commencer, assurez-vous d'avoir installé les éléments suivants sur votre ordinateur :
 - **Python 3.8 ou version supérieure** : [Télécharger Python](https://www.python.org/downloads/)
 - **Git** : [Télécharger Git](https://git-scm.com/downloads)
@@ -59,7 +59,7 @@ Avant de commencer, assurez-vous d'avoir installé les éléments suivants sur v
 
 ---
 
-### Étapes pour cloner et exécuter le projet
+# Étapes pour cloner et exécuter le projet
 
 1. **Cloner le dépôt**
    Ouvrez un terminal ou une invite de commande et exécutez la commande suivante :

@@ -50,15 +50,13 @@ def render_datasets_page():
         df['Date de création'] = pd.to_datetime(df['Date de création'], errors='coerce')
 
         # Metrics Section
-        col1, col2, col3, col4 = st.columns(4)
+        col1, col2, col3 = st.columns(3)  # Suppression d'une colonne
         with col1:
             st.metric("Nombre de Modèles", f"{len(df):,}")
         with col2:
-            st.metric("Total Likes", f"{df['Likes'].sum():,}")
+            st.metric("Nombre d'Auteurs", f"{df['Auteur'].nunique():,}")  # Nouveau calcul pour les auteurs uniques
         with col3:
             st.metric("Total Téléchargements", f"{df['Téléchargements'].sum():,}")
-        with col4:
-            st.metric("Modèles Privés", f"{df['Privé'].sum()}")
 
         # Sidebar filters
         st.sidebar.markdown("### Filtres")
@@ -79,7 +77,7 @@ def render_datasets_page():
 
         # Titre visualisation
         st.markdown("<h2 style='color: #FFD700;'>Modèle le Plus Populaire par Mois</h2>", unsafe_allow_html=True)
-        st.markdown("Ce graphique montre le modèle le plus likés chaque mois.")
+        st.markdown("Ce graphique montre le modèle le plus liké chaque mois.")
 
         # Préparation des données
         timeline_df = filtered_df.copy()
@@ -162,9 +160,8 @@ def render_datasets_page():
         st.markdown("Ce tableau affiche les modèles disponibles après application des filtres et critères de recherche.")
         st.dataframe(filtered_df[[
             "ID", "Auteur", "Gated", "Inference", "Dernière modification",
-            "Likes", "Trending Score", "Privé", "Téléchargements",
-            "Tags", "Library", "Date de création"
-        ]])
+            "Likes", "Trending Score", "Téléchargements", "Tags", "Library", "Date de création"
+        ]])  # Suppression de la colonne "Privé"
     else:
         st.error("Aucune donnée disponible.")
 

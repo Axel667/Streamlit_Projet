@@ -73,7 +73,13 @@ def render_benchmarks_page():
         st.session_state["active_page"] = "Accueil"
 
     st.markdown("<h1 style='color:#FFD700;'>Tableau de Bord des Modèles LLM Open Source</h1>", unsafe_allow_html=True)
-    st.markdown("<p class='subtitle'>Explorez les données de performance des modèles de langage :</p>", unsafe_allow_html=True)
+
+    st.markdown("Ce tableau de bord utilise un dataset Hugging Face des performances de différentes métriques sur les modèles hébergés."
+                " Vous pouvez explorer ce dataset [ici](https://huggingface.co/spaces/open-llm-leaderboard/open_llm_leaderboard).",
+        unsafe_allow_html=True
+    )
+
+    st.markdown("<h5 style='color:#FFD700;'>Explorez les données de performance des modèles de langage :</h1>", unsafe_allow_html=True)
 
     # Fetch leaderboard data
     df = fetch_leaderboard_data()
@@ -156,12 +162,8 @@ def render_benchmarks_page():
             if not df_melted.empty:
                 st.markdown("<h2 style='color:#FFD700;'>Évolution des Performances par Type de Modèle</h2>", unsafe_allow_html=True)
                 col1, col2 = st.columns([2, 1])
-                with col1:
-                    st.markdown("""
-                    Cette visualisation met en évidence :
-                    - L'évolution des performances pour chaque métrique au fil du temps
-                    - Les types des modèles les plus performants à chaque période
-                    - La progression des différentes architectures de modèles
+                st.markdown("""
+                    Cette visualisation met en évidence l'évolution des performances pour chaque métrique au fil du temps. En effectuant des filtres sur un type de modèle ou un modèle en particulier, il est possible de voir l'évolution de performances des différentes architectures de modèles. 
                     """)
 
                 # Time interval selection
@@ -327,7 +329,7 @@ def render_benchmarks_page():
             """)
 
         # Add table section at the bottom with scrollable layout
-        st.markdown("<h2 style='color:#FFD700;'>📋 Liste Complète des Modèles</h2>", unsafe_allow_html=True)
+        st.markdown("<h2 style='color:#FFD700;'>Liste Complète des Modèles</h2>", unsafe_allow_html=True)
 
         # Prepare the DataFrame display
         df_to_display = filtered_df[display_columns + ['model_link']].copy()
@@ -351,7 +353,7 @@ def render_benchmarks_page():
         # Documentation des métriques d'évaluation
         st.markdown("""
         ---
-        <h2 style='color:#FFD700;'>📚 Documentation des Métriques d'Évaluation</h2>
+        <h2 style='color:#FFD700;'>Documentation des Métriques d'Évaluation</h2>
 
         Nous évaluons les modèles sur 6 benchmarks clés utilisant le framework Eleuther AI Language Model Evaluation Harness:
 

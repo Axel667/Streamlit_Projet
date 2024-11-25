@@ -9,16 +9,25 @@ def render_accueil_page():
     st.markdown("<h3 style='text-align: center; color: #FFD700;'>Contexte du Projet</h3>", unsafe_allow_html=True)
 
     st.markdown("""
-    Ce projet est en lien avec notre projet IA de finetuning de LLM. Cette app permet d'explorer les LLM en open data via leur fine-tuning, avec une analyse approfondie des modèles et des données.
+    Ce projet est en lien avec notre projet IA de finetuning de LLM que nous réaliserons au second semestre. Cette app permet d'explorer les modèles open source, leurs architectures mais aussi de comparer leurs performances et de se documenter facilement à l'aide d'articles. 
     """)
 
     st.markdown("<h3 style='text-align: center; color: #FFD700;'>Fonctionnalités</h3>", unsafe_allow_html=True)
 
     # Contenu de la page d'accueil
     st.markdown("""
-    - **Catalogue des Modèles** : Explorez et visualisez les modèles Hugging Face (populaires, thèmes, téléchargements).
-    - **Benchmarks** : Analysez les performances des modèles via des données de référence.
-    - **Actualités** : Consultez et filtrez les articles sur les LLM selon le sentiment, la période ou les pays.
+    - **Catalogue des Modèles** : Explorez les modèles Hugging Face disponibles, leurs téléchargements, ainsi que leurs tendances de popularité au fil du temps.
+    - **Benchmarks** : Comparez les performances des modèles sur différentes métriques et visualisez l'impact environnemental (coût CO₂) des différentes architectures.
+    - **Actualités** : Consultez les articles récents sur les LLM, filtrez-les par pays, période ou score de sentiment, et obtenez une vue d'ensemble des tendances géographiques et temporelles.
+    """)
+
+    st.markdown("<h3 style='text-align: center; color: #FFD700;'>Utilité du Projet</h3>", unsafe_allow_html=True)
+
+    st.markdown("""
+    Cette application permet se documenter sur les modèles de langage open source et leurs performances, en vue de notre projet IA du second semestre mais aussi :
+    - D'identifier les modèles les plus adaptés pour notre projet de fine-tuning en fonction de leurs benchmarks.
+    - De suivre les tendances actuelles dans le domaine des LLM.
+    - De choisir une architecture adapté avec nos objectifs.
     """)
 
 def main():

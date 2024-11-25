@@ -116,6 +116,9 @@ def render_actu_page():
     total_articles = len(df_filtered)
     total_pages = max((total_articles + articles_per_page - 1) // articles_per_page, 1)  # Avoid division by zero
 
+    st.markdown("<h2 style='color:#FFD700;'>Articles</h2>", unsafe_allow_html=True)
+    st.markdown("""Visualisez de manière rapide la page d'un article, son score de sentiment, sa localisation et sa date de publication.""")
+
     # Pagination and search in the same row
     col1, col2, col3 = st.columns([2, 1, 2])
     
@@ -134,7 +137,7 @@ def render_actu_page():
             value=1,
             key="page_selector"
         )
-
+    
     # Apply search filter after pagination calculation
     if search_query:
         temp_df = df_filtered[df_filtered['title'].str.contains(search_query, case=False, na=False)]
@@ -156,7 +159,6 @@ def render_actu_page():
 
     # Only show article section if we have results
     if total_articles > 0:
-        st.markdown("### 📰 Articles")
         
         # Include CSS from style.css
         with open("style.css") as f:
@@ -203,8 +205,8 @@ def render_actu_page():
     st.progress(progress)
 
     # Metrics Section après les articles
-    st.markdown("### 📊 Statistiques")
-    st.markdown("### 📰 Aperçu des Articles")
+    st.markdown("<h2 style='color:#FFD700;'>Statistiques</h2>", unsafe_allow_html=True)
+
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.metric("Total Articles", f"{len(df_articles_llm):,}")
@@ -218,7 +220,7 @@ def render_actu_page():
         st.metric("Articles (7 derniers jours)", f"{recent_articles:,}")
 
     # Rest of visualizations with updated styling
-    st.markdown("### 🗺️ Distribution Géographique")
+    st.markdown("<h2 style='color:#FFD700;'>Distribution Géographique</h2>", unsafe_allow_html=True)
     st.markdown("Cette carte montre la quantité et le sentiment global des articles sur les LLM dans le monde.")
 
     # Calcul du nombre d'articles et du sentiment moyen par pays
@@ -269,7 +271,8 @@ def render_actu_page():
 
     st.plotly_chart(fig_map, use_container_width=True)
 
-    st.markdown("### 📈 Tendances Temporelles")
+    st.markdown("<h2 style='color:#FFD700;'>Tendances Temporelles</h2>", unsafe_allow_html=True)
+
     st.markdown("Ce graphique montre le nombre d'articles et le sentiment moyen au cours du temps.")
 
     time_stats = df_filtered.groupby('date').agg(
@@ -316,13 +319,14 @@ def render_actu_page():
             side='right'
         ),
         legend=dict(x=0.1, y=1.1, orientation='h'),
-        title=False,
+        title= "",
         hovermode='x unified'
     )
 
     st.plotly_chart(fig_time, use_container_width=True)
 
-    st.markdown("### 🥧 Répartition par Pays")
+    st.markdown("<h2 style='color:#FFD700;'>Répartition par Pays</h2>", unsafe_allow_html=True)
+
     st.markdown("Ce graphique montre quel pays produit le plus d'articles sur les LLM dans notre base.")
 
     # Calculer le nombre d'articles par pays

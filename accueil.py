@@ -24,10 +24,10 @@ def render_accueil_page():
     st.markdown("<h3 style='text-align: center; color: #FFD700;'>Utilité du Projet</h3>", unsafe_allow_html=True)
 
     st.markdown("""
-    Cette application permet se documenter sur les modèles de langage open source et leurs performances, en vue de notre projet IA du second semestre mais aussi :
+    Cette application permet de se documenter sur les modèles de langage open source et leurs performances, en vue de notre projet IA du second semestre mais aussi :
     - D'identifier les modèles les plus adaptés pour notre projet de fine-tuning en fonction de leurs benchmarks.
     - De suivre les tendances actuelles dans le domaine des LLM.
-    - De choisir une architecture adapté avec nos objectifs.
+    - De choisir une architecture adaptée avec nos objectifs.
     """)
 
 def main():

@@ -32,3 +32,46 @@ Use pip to install the required libraries:
 Launch the app by running the following command:
     ```bash
     streamlit run app.py
+
+# Hugging Face Explorer 🤗
+
+Bienvenue dans le projet **Hugging Face Explorer**, une application interactive développée pour explorer et analyser les modèles de langage open source hébergés sur la plateforme Hugging Face. Ce projet a été conçu dans le cadre de notre projet IA du second semestre, avec un objectif principal : identifier et analyser les modèles les plus pertinents pour un projet de fine-tuning sur des modèles de langage (LLM).
+
+---
+
+## 📝 Contexte du Projet
+
+Ce projet a pour but de fournir une plateforme intuitive et riche en données, permettant de :
+- Explorer les modèles de langage open source et leurs caractéristiques (auteurs, tags, téléchargements, etc.).
+- Comparer les performances des modèles sur des métriques standardisées telles que **IFEval**, **BBH**, ou encore **MATH Lvl 5**.
+- Agréger et visualiser des actualités récentes sur les LLM pour rester informé des dernières tendances.
+
+L'application est développée avec **Streamlit**, en s'appuyant sur les API et datasets disponibles sur Hugging Face et d'autres plateformes.
+
+---
+
+## 🚀 Fonctionnalités Principales
+
+### 1. Catalogue des Modèles
+- S'appuie sur l'API Hugging Face pour extraire des informations telles que les auteurs, les tags, les téléchargements, et les tendances de popularité.
+- **Visualisations :**
+  - Un graphique temporel pour afficher le modèle le plus populaire chaque mois.
+  - Un camembert représentant les tags les plus fréquents parmi les modèles.
+  - Un tableau interactif permettant de filtrer et de rechercher des modèles.
+
+### 2. Benchmarks
+- Compare les performances des modèles à l'aide du dataset **Open LLM Leaderboard**.
+- **Visualisations :**
+  - Un graphique linéaire pour suivre l'évolution des performances des modèles par type.
+  - Un diagramme circulaire montrant la répartition des types de modèles disponibles.
+  - Une courbe illustrant l'empreinte carbone cumulée des modèles.
+  - Un nuage de points examinant la relation entre performances, coût CO₂, et taille des paramètres.
+
+### 3. Actualités
+- Agrège les articles récents sur les LLM via l'API **EventRegistry**.
+- **Visualisations :**
+  - Une carte géographique représentant la répartition des articles par pays et leur sentiment moyen.
+  - Un graphique à double axe montrant l'évolution du nombre d'articles publiés et de leur sentiment moyen.
+  - Un diagramme circulaire mettant en évidence les pays produisant le plus d'articles.
+
+---

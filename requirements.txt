@@ -1,18 +1,20 @@
-benchmark 
-actu   # Nouvel import 
-re
-plotly
-plotly.express 
-plotly.graph_objects  
-os 
-bs4
-streamlit
-pandas
-app
-eventregistry
-requests
-python-dotenv
-beautifulsoup4
-numpy
-datasets
-datetime
+# Interface utilisateur
+streamlit~=1.28.0
+
+# Manipulation de données
+pandas~=1.5.3
+numpy~=1.23.5
+
+# Visualisation
+plotly~=5.18.0
+
+# API et requêtes
+eventregistry~=9.0.0
+requests~=2.31.0
+
+# Parsing et traitement
+beautifulsoup4~=4.12.0
+python-dotenv~=0.19.0
+
+# Dataset Hugging Face
+datasets~=2.14.0

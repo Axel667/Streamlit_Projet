@@ -10,16 +10,27 @@ from dotenv import load_dotenv
 # Charger les variables d'environnement
 load_dotenv()
 
-# Fallback si le .env ne fonctionne pas
-api_key = os.getenv('EVENT_REGISTRY_API_KEY') or "6d15fe13-b16a-4080-bbff-dc81f97f3d0d"
+# Remplacer la section de chargement de la clé API par:
+try:
+    api_key = st.secrets["EVENT_REGISTRY_API_KEY"]
+except Exception as e:
+    # Fallback pour le développement local
+    api_key = os.getenv('EVENT_REGISTRY_API_KEY', "6d15fe13-b16a-4080-bbff-dc81f97f3d0d")
+    if not api_key:
+        st.error("Clé API non trouvée. Veuillez configurer EVENT_REGISTRY_API_KEY dans les secrets Streamlit ou le fichier .env")
+        st.stop()
 
 
 def render_actu_page():
     # Titre avec le style Hugging Face
     st.markdown("<h1 style='text-align: center; color: #FFD700;'>Actualités des LLMs</h1>", unsafe_allow_html=True)
     
-    # Récupérer la clé API depuis les variables d'environnement
-    api_key = os.getenv('EVENT_REGISTRY_API_KEY')
+    # Modifier la gestion de la clé API
+    try:
+        api_key = st.secrets["EVENT_REGISTRY_API_KEY"]
+    except:
+        st.error("Clé API non trouvée. Veuillez configurer EVENT_REGISTRY_API_KEY dans les secrets Streamlit.")
+        st.stop()
     
     if not api_key:
         st.error("La clé API EVENT_REGISTRY_API_KEY n'est pas configurée dans le fichier .env")
